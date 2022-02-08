@@ -12,7 +12,7 @@ import java.util.Comparator;
  */
 public class SortableList<E> implements ISortableList<E>, IList211<E> {
   // Declare.
-  private E[] data;
+  private DLinkedNode tail;
   private int size;
   private int numSwaps;
   private int numComps;
@@ -42,7 +42,9 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   @SuppressWarnings("unchecked")
   public SortableList() {
     // initialize the member variables.
-    this.data = (E[]) new Object[10];
+    tail.item = null;
+    tail.next = null;
+    tail.prev = null;
   }
   
   
@@ -240,7 +242,7 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
     size--;
     // return the removed value
     return returnValue;
-  }
+   }
   
   @SuppressWarnings("unused")
   private void checkIndex(int index) {
