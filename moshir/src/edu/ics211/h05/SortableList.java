@@ -1,5 +1,7 @@
 package edu.ics211.h05;
 
+import edu.ics211.h04.ISortableList;
+import edu.ics211.h04.IList211;
 import java.util.Arrays;
 import java.util.Comparator;
 
