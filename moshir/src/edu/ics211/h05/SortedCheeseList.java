@@ -1,6 +1,7 @@
 package edu.ics211.h05;
 
 import edu.ics211.h02.Cheese;
+import edu.ics211.h04.IList211;
 import java.util.Comparator;
 
 
