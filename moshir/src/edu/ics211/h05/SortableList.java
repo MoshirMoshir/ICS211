@@ -24,16 +24,22 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
    *
    */
   private class DLinkedNode {
-	  E item;
-	  DLinkedNode next;
-	  DLinkedNode prev;
-	  
-	  public DLinkedNode(E item, DLinkedNode next, DLinkedNode prev) {
-	    this.item = item;
-	    this.next = next;
-	    this.prev = prev;
-	  }
-	}
+    E item;
+    DLinkedNode next;
+    DLinkedNode prev;
+      
+    /**
+     * Creates a DlinkedNode.
+     * @param item item to be in list
+     * @param next the next dlinkednode
+     * @param prev the previous dlinkednode
+     */
+    public DLinkedNode(E item, DLinkedNode next, DLinkedNode prev) {
+      this.item = item;
+      this.next = next;
+      this.prev = prev;
+    }
+  }
   
   /**
    * Creates a new SortableList.
@@ -143,16 +149,23 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
     sortTime = endSortTime - startSortTime;
   }
   
+  private DLinkedNode traverse(int index) {
+    //create temp node to traverse
+    DLinkedNode temp = tail;
+	for (int i = size - 1; i > index; i--) {
+		  temp = temp.prev;
+		  
+	  }
+  }
   
   // Code from screen cast.
   @Override
   public E get(int index) {
-    // check index if valid
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException(index);
-    }
-    // return item at index
-    return (E) data[index];
+    // check index
+	checkIndex(index);
+	// traverse the nodes starting with tail to index
+	DlinkedNode temp = traverse(index);
+	return null;
   }
 
   
@@ -160,28 +173,21 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   @Override
   public E set(int index, E element) {
     // check the index
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException(index);
-    }
+    // traverse to index
     // remember the old value
-    E old = (E) data[index];
-    // set the value at index to element
-    data[index] = element;
-    // return the old value
-    return old;
+	 set temp.item = element
+// return old value
+			 return null;
   }
 
 
   @Override
   public int indexOf(Object obj) {
-    // loop over the items
-    for (int i = 0; i < data.length; i++) {
-      // if data[i].equals(o)
-      if (data[i] != null && data[i].equals(obj)) { 
-        // return i
-        return i; 
-      }
-    }
+   DLinkedNode temp = tail;
+   // loop from size - 1 to 0
+   // if temp.item.equals(obj)
+   // return loop counter
+
     
     // return -1
     return -1;
@@ -191,7 +197,7 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   @Override
   public int size() {
     // return size
-    return size;
+    return this.size;
   }
 
   
@@ -206,20 +212,26 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   @Override
   public void add(int index, E element) {
     // check index
-    if (index < 0 || index > size) { // > size
-      throw new IndexOutOfBoundsException(index);
+    checkIndex(index);
+    // create a new DLinkedNode with element
+    DLinkedNode node = new DlinkedNode(element, null, null);
+    // if index == size {
+    //	point node to list
+    node.prev = tail;
+    // point list to node
+    tail.next = node;
+    // update tail
+    tail = node;
+    // } else 
+    // traverse to index
+    // point node to list
+    node.prev = temp.prev;
+    node.next = temp;
+    // point the list to the node
+    temp.prev = node;
+    if(node.prev != null) {
+    	node.prev = node;
     }
-    // check if data is full
-    if (size == data.length) {
-      // reallocate
-      data = Arrays.copyOf(data, data.length * 2);
-    }
-    // shift the items from size - 1 to index to the right/+1
-    for (int i = size; i > index; i--) {
-      data[i] = data[i - 1];
-    }
-    // insert element at index
-    data[index] = element;
     // increment size
     size++;
   }
@@ -229,9 +241,7 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   @Override
   public E remove(int index) {
     // check the index
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException(index);
-    }
+    checkIndex(index);
     // remember the removed value at index
     E returnValue = (E) data[index];
     // shift the items from index to size - 1 to the left /-1

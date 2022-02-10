@@ -1,11 +1,11 @@
-package edu.ics211.h04;
+package edu.ics211.h05;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import edu.ics211.h04.StringComparator;
 import org.junit.jupiter.api.Test;
-
 
 
 class SortableListTest {
