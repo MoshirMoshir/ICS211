@@ -182,23 +182,20 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   // Code from screen cast.
   @Override
   public E set(int index, E element) {
-    /**
+
     // check the index
     checkIndex(index);
+    if (index == size) {
+      throw new IndexOutOfBoundsException();
+    }
     // traverse to index
     DLinkedNode temp = traverse(index);
+    E old = temp.item;
     // remember the old value
     temp.item = element;
     // return old value
-    return temp.item;
-    */
-    DLinkedNode temp = traverse(index);
-    DLinkedNode node = new DLinkedNode(element, null, null);
-    node.next = temp.next;
-    node.prev = temp.prev;
-    temp.prev.next = temp.next;
-    temp.next.prev = temp.prev;
-    return temp.item;
+    return old;
+
   }
 
 
