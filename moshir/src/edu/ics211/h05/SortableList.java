@@ -214,21 +214,27 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
     // check index
     checkIndex(index);
     // create a new DLinkedNode with element
-    DLinkedNode node = new DlinkedNode(element, null, null);
+    DLinkedNode node = new DLinkedNode(element, null, null);
+    if (size == 0) {
+    	tail = node;
+    }
     // if index == size {
-    //	point node to list
-    node.prev = tail;
-    // point list to node
-    tail.next = node;
-    // update tail
-    tail = node;
-    // } else 
-    // traverse to index
-    // point node to list
-    node.prev = temp.prev;
-    node.next = temp;
-    // point the list to the node
-    temp.prev = node;
+    if (index == size) {
+        //	point node to list
+        node.prev = tail;
+        // point list to node
+        tail.next = node;
+        // update tail
+        tail = node;
+    } else {
+    	// traverse to index
+    	DLinkedNode temp = traverse(index);
+        // point node to list
+        node.prev = temp.prev;
+        node.next = temp;
+        // point the list to the node
+        temp.prev = node;
+    }
     if(node.prev != null) {
     	node.prev = node;
     }
