@@ -1,7 +1,7 @@
 package edu.ics211.h05;
 
-import edu.ics211.h04.ISortableList;
 import edu.ics211.h04.IList211;
+import edu.ics211.h04.ISortableList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -48,9 +48,10 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   @SuppressWarnings("unchecked")
   public SortableList() {
     // initialize the member variables.
-    tail.item = null;
-    tail.next = null;
-    tail.prev = null;
+    size = 0;
+    numSwaps = 0;
+    numComps = 0;
+    sortTime = 0.0;
   }
   
   
@@ -63,13 +64,15 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
     numComps = 0;
     // for loop 1 to data.length
     for (int nextPos = 1; nextPos < size; nextPos++) {
-      E nextVal = data[nextPos];
-      while (nextPos > 0 && compare.compare(nextVal, data[nextPos - 1]) < 0) {
+      E nextVal = get(nextPos);
+      while (nextPos > 0 && compare.compare(nextVal, get(nextPos - 1)) < 0) {
         // count the compare
         numComps++;
         // data[nextPos] = table[nextPos - 1]; // Shift down. count the swap
-        data[nextPos] = data[nextPos - 1];
-        data[nextPos - 1] = nextVal;
+        //data[nextPos] = data[nextPos - 1];
+        //data[nextPos - 1] = nextVal;
+        set(indexOf(nextPos), get(nextPos - 1));
+        set(indexOf(nextPos - 1), nextVal);
         // nextPos-; // Check next smaller element.
         nextPos--;
       }
@@ -97,14 +100,16 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
     do {
       // didSwap is false
       didSwap = false;
-      for (int j = 0; j < data.length - 1; j++) {
+      for (int j = 0; j < size - 1; j++) {
         // count the compare
         numComps++;
-        if (compare.compare(data[j], data[j + 1]) > 0) {
+        if (compare.compare(get(j), get(j + 1)) > 0) {
           // swap(data[j], data[j + 1])
-          E temp = data[j];
-          data [j] = (data[j + 1]);
-          data [j + 1] = temp;
+          E temp = get(j);
+          //data [j] = (data[j + 1]);
+          //data [j + 1] = temp;
+          set(indexOf(j), get(j + 1));
+          set(indexOf(j + 1), temp);
           // count swap
           numSwaps++;
           // set didSwap true
@@ -132,16 +137,18 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
       for (int nextPos = fill + 1; nextPos < size; nextPos++) {
         // count the compare
         numComps++;
-        if (compare.compare(data[nextPos], data[posMin]) < 0) {
+        if (compare.compare(get(nextPos), get(posMin)) < 0) {
           posMin = nextPos;
           // count the swaps
           numSwaps++;
         }
       }
       // swap ([fill], [posMin])
-      E temp = (E) data[fill];
-      data[fill] = data[posMin];
-      data[posMin] = temp;
+      E temp = (E) get(fill);
+      //data[fill] = data[posMin];
+      //data[posMin] = temp;
+      set(fill, get(posMin));
+      set(posMin, temp);
     }
     // get the end time
     final long endSortTime = System.nanoTime();
@@ -152,20 +159,20 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   private DLinkedNode traverse(int index) {
     //create temp node to traverse
     DLinkedNode temp = tail;
-	for (int i = size - 1; i > index; i--) {
-		  temp = temp.prev;
-		  
-	  }
+    for (int i = size - 1; i > index; i--) {
+      temp = temp.prev;
+    }
+    return temp;
   }
   
   // Code from screen cast.
   @Override
   public E get(int index) {
     // check index
-	checkIndex(index);
-	// traverse the nodes starting with tail to index
-	DlinkedNode temp = traverse(index);
-	return null;
+    checkIndex(index);
+    // traverse the nodes starting with tail to index
+    DLinkedNode temp = traverse(index);
+    return temp.item;
   }
 
   
@@ -173,22 +180,29 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   @Override
   public E set(int index, E element) {
     // check the index
+    checkIndex(index);
     // traverse to index
+    DLinkedNode temp = traverse(index);
     // remember the old value
-	 set temp.item = element
-// return old value
-			 return null;
+    temp.item = element;
+    // return old value
+    return temp.item;
   }
 
 
   @Override
   public int indexOf(Object obj) {
-   DLinkedNode temp = tail;
-   // loop from size - 1 to 0
-   // if temp.item.equals(obj)
-   // return loop counter
-
+    DLinkedNode temp = tail;
+    // loop from size - 1 to 0
+    for (int i = size - 1; i >= 0; i--) {
+      // if temp.item.equals(obj)
+      if (temp.item.equals(obj)) {
+        // return loop counter
+        return i;
+      }
+      temp = temp.prev;
     
+    }
     // return -1
     return -1;
   }
@@ -216,27 +230,27 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
     // create a new DLinkedNode with element
     DLinkedNode node = new DLinkedNode(element, null, null);
     if (size == 0) {
-    	tail = node;
+      tail = node;
     }
     // if index == size {
     if (index == size) {
-        //	point node to list
-        node.prev = tail;
-        // point list to node
-        tail.next = node;
-        // update tail
-        tail = node;
+      // point node to list
+      node.prev = tail;
+      // point list to node
+      tail.next = node;
+      // update tail
+      tail = node;
     } else {
-    	// traverse to index
-    	DLinkedNode temp = traverse(index);
-        // point node to list
-        node.prev = temp.prev;
-        node.next = temp;
-        // point the list to the node
-        temp.prev = node;
+      // traverse to index
+      DLinkedNode temp = traverse(index);
+      // point node to list
+      node.prev = temp.prev;
+      node.next = temp;
+      // point the list to the node
+      temp.prev = node;
     }
-    if(node.prev != null) {
-    	node.prev = node;
+    if (node.prev != null) {
+      node.prev.next = node;
     }
     // increment size
     size++;
@@ -246,23 +260,19 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
   // Code from screen cast.
   @Override
   public E remove(int index) {
-    // check the index
+    // checkIndex
     checkIndex(index);
-    // remember the removed value at index
-    E returnValue = (E) data[index];
-    // shift the items from index to size - 1 to the left /-1
-    for (int i = index + 1; i < size; i++) {
-      data[i - 1] = data[i];
-    }
-    // decrement the size
+    // create a new DLinkedNode with element
+    DLinkedNode temp = traverse(index);
+    temp.prev.next = temp.next;
+    temp.next.prev = temp.prev;
     size--;
-    // return the removed value
-    return returnValue;
-   }
+    return temp.item;
+  }
   
   @SuppressWarnings("unused")
   private void checkIndex(int index) {
-    if (index < 0 || index >= size) {
+    if (index < 0 || index > size) {
       throw new IndexOutOfBoundsException();
     }
   }

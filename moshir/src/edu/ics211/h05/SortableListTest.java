@@ -25,7 +25,7 @@ class SortableListTest {
     list.add("foo");
     list.add("bar");
     list.add("baz");
-    list.insertionSort(new StringComparator());
+    list.selectionSort(new StringComparator());
     assertEquals("bar", list.get(0));
     assertEquals("baz", list.get(1));
     assertEquals("foo", list.get(2));
@@ -48,8 +48,8 @@ class SortableListTest {
       // this is what we want
     }
     try {
-      list.get(list.size());
-      fail("Able to grab index of (list.size())");
+      list.get(list.size() + 1);
+      fail("Able to grab index of (list.size() + 1)");
     } catch (IndexOutOfBoundsException ioe) {
       // this is what we want
     }
