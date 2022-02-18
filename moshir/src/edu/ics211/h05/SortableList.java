@@ -282,7 +282,6 @@ public class SortableList<E> implements ISortableList<E>, IList211<E> {
     return temp.item;
   }
   
-  @SuppressWarnings("unused")
   private void checkIndex(int index) {
     if (index < 0 || index > size) {
       throw new IndexOutOfBoundsException();
