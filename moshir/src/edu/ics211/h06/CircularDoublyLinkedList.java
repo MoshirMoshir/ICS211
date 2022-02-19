@@ -33,9 +33,9 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   
   private class IListIterator implements ListIterator<E> {
 
-    DLinkedNode current;
-    DLinkedNode last;
-    private int index;
+    DLinkedNode nextNode;
+    DLinkedNode jumpedOver;
+    private int nextIndex;
       
     /**
      * Creates a list iterator.
@@ -45,8 +45,9 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     IListIterator(DLinkedNode head, int size) {
       //head.prev = tail;
       //tail.next = head;
-      current = tail;
-      index = 0;
+      nextNode = head;
+      jumpedOver = null;
+      nextIndex = 0;
     }
     
     @Override
@@ -59,11 +60,11 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   
     @Override
     public E next() {
-      E old = current.item;
+      E old = nextNode.item;
       if (hasNext() == true) {
-        last = current;
-        current = current.next;
-        index++;
+        jumpedOver = nextNode;
+        nextNode = nextNode.next;
+        nextIndex++;
         return old;
       } else {
         throw new NoSuchElementException();
@@ -82,10 +83,10 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     @Override
     public E previous() {
       if (hasPrevious()) {
-        index--;
-        last = current;
-        current = current.prev;
-        return last.item;
+        nextIndex--;
+        jumpedOver = nextNode;
+        nextNode = jumpedOver.prev;
+        return jumpedOver.item;
       } else {
         throw new NoSuchElementException();
       }
@@ -93,27 +94,27 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   
     @Override
     public int nextIndex() {
-      return index;
+      return nextIndex;
     }
   
     @Override
     public int previousIndex() {
-      if (index == 0) {
+      if (nextIndex == 0) {
         return -1;
       } else {
-        return index;
+        return nextIndex;
       }
     }
   
     @Override
     public void remove() {
-      current.prev.next = current.next;
-      current.next.prev = current.prev;
+      nextNode.prev.next = nextNode.next;
+      nextNode.next.prev = nextNode.prev;
     }
   
     @Override
     public void set(E e) {
-      current.item = e;
+      nextNode.item = e;
     }
   
     @Override
