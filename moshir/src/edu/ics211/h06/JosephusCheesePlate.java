@@ -20,7 +20,10 @@ public class JosephusCheesePlate implements ICheeseTasting {
 
   @Override
   public List<Cheese> tasteCheeses(int start, int step, boolean isClockwise) {
-    // TODO Auto-generated method stub
+      
+    CircularDoublyLinkedList<Cheese> cheeseList = new CircularDoublyLinkedList<Cheese>();
+    
+    
     return null;
   }
 

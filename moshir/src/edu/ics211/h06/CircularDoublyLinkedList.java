@@ -3,6 +3,8 @@ package edu.ics211.h06;
 
 import edu.ics211.h04.IList211;
 import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Represents a CircularDoublyLinkedList.
@@ -13,10 +15,9 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
 
   // Declare.
   private DLinkedNode tail;
+  private DLinkedNode head;
+
   private int size;
-  private int numSwaps;
-  private int numComps;
-  private double sortTime;
 
   private class DLinkedNode {
     E item;
@@ -30,68 +31,96 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     }
   }
   
-  /**
-   * Represents a ListIterator.
-   * @author Alexander Moshir
-   * @param <E> placeholder type
-   */
-  public interface ListIterator<E> {
+  private class IListIterator implements ListIterator<E> {
+
+    DLinkedNode current;
+    DLinkedNode last;
+    private int index;
+      
     /**
-     * Inserts the specified element to the list. (Optional for this assignment)
-     * @param e thing to be added
+     * Creates a list iterator.
+     * @param head first element
+     * @param size of list
      */
-    void add(E e);
+    IListIterator(DLinkedNode head, int size) {
+      //head.prev = tail;
+      //tail.next = head;
+      current = tail;
+      index = 0;
+    }
     
-    /**
-     * Returns true if this list iterator has more elements 
-     *  while traversing in the forward direction.
-     * @return boolean
-     */
-    boolean hasNext(); 
-    
-    /**
-     *  Returns true if this list iterator has more elements
-     *   while traversing in the reverse direction.
-     * @return boolean
-     */
-    boolean hasPrevious();
-    
-    /**
-     * Returns the next Element.
-     * @return E
-     */
-    E next();
-    
-    /**
-     * Returns the index of the next element.
-     * @return int
-     */
-    int nextIndex();
-    
-    /**
-     * Returns the previous Element.
-     * @return E
-     */
-    E previous();
-    
-    /**
-     * Returns the index of the previous element.
-     * @return int
-     */
-    int previousIndex();
-    
-    /**
-     * Removes from the list the last element that was returned.
-     */
-    void remove();
-    
-    /**
-     * Replaces the last element returned. (Optional for this assignment)
-     * @param e thing to be set
-     */
-    void set(E e);
-    
-    
+    @Override
+    public boolean hasNext() {
+      if (size > 0) {
+        return true;
+      }
+      return false;
+    }
+  
+    @Override
+    public E next() {
+      E old = current.item;
+      if (hasNext() == true) {
+        last = current;
+        current = current.next;
+        index++;
+        return old;
+      } else {
+        throw new NoSuchElementException();
+      }
+      
+    }
+  
+    @Override
+    public boolean hasPrevious() {
+      if (size > 0) {
+        return true;
+      }
+      return false;
+    }
+  
+    @Override
+    public E previous() {
+      if (hasPrevious()) {
+        index--;
+        last = current;
+        current = current.prev;
+        return last.item;
+      } else {
+        throw new NoSuchElementException();
+      }
+    }
+  
+    @Override
+    public int nextIndex() {
+      return index;
+    }
+  
+    @Override
+    public int previousIndex() {
+      if (index == 0) {
+        return -1;
+      } else {
+        return index;
+      }
+    }
+  
+    @Override
+    public void remove() {
+      current.prev.next = current.next;
+      current.next.prev = current.prev;
+    }
+  
+    @Override
+    public void set(E e) {
+      current.item = e;
+    }
+  
+    @Override
+    public void add(E e) {
+      add(e);
+    }
+      
   }
 
   /**
@@ -114,8 +143,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   
   @Override
   public Iterator<E> iterator() {
-    // TODO Auto-generated method stub
-    return null;
+    return new IListIterator(head, size);
   }
 
   private DLinkedNode traverse(int index) {
@@ -223,7 +251,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     checkIndex(index);
     // create a new DLinkedNode with element
     DLinkedNode temp = traverse(index);
-    if (temp == null) {
+    if (temp == null || temp.next == null) {
       throw new IndexOutOfBoundsException();
     }
     temp.prev.next = temp.next;
