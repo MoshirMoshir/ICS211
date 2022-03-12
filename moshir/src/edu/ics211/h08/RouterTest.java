@@ -44,12 +44,13 @@ class RouterTest {
     assertNotNull(router);
     assertNotNull(sent);
     // test each of the queues
-    for (int q = 0; q < 7; q++) {
+    for (int q = 0; q < 6; q++) {
       // send 7 packets, all to queue q
       Packet p = new Packet(q);
       packets.add(p);
       assertNotNull(p);
       for (int i = 0; i < 7; i++) {
+        System.out.println(i);
         assertTrue(router.acceptPacket(p));
       }
       sent.clear();          // see which packets we send

@@ -1,5 +1,6 @@
 package edu.ics211.h08;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,29 +10,44 @@ import java.util.List;
  */
 public class Router implements RouterInterface {
 
+  private PacketQueue queue;
+  private List<Packet> dropped;
+  PacketSenderInterface sender;
+  
   /**
-   * Initilizes Router.
+   * Router initializes variables.
+   * @param s IDs sender
    */
-  public Router() {
-    // TODO Auto-generated constructor stub
+  public Router(PacketSenderInterface s) {
+    sender = s;
+    queue = new PacketQueue();
+    dropped = new ArrayList<Packet>();
+    
+
   }
 
   @Override
   public void advanceTime() {
-    // TODO Auto-generated method stub
-
+    Packet p = queue.poll();
+    sender.send(p.getAddress(), p);
   }
 
   @Override
   public boolean acceptPacket(Packet p) {
-    // TODO Auto-generated method stub
-    return false;
+    if (queue.offer(p)) {
+      return true;
+    } else {
+      dropped.add(p);
+      return false;
+    }
+
   }
 
   @Override
   public List<Packet> getDroppedPackets() {
-    // TODO Auto-generated method stub
-    return null;
+    List<Packet> temp = dropped;
+    dropped.clear();
+    return temp;
   }
 
 }
